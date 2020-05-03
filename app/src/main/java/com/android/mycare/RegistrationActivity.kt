@@ -33,10 +33,9 @@ class RegistrationActivity : AppCompatActivity() {
         supportActionBar?.hide()
         progressBar.visibility = View.GONE
         registration_success_textview.visibility = View.GONE
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("sites");
-        val query = mDatabase!!.orderByChild("site_name");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("sites")
+        val query = mDatabase!!.orderByChild("site_name")
         val siteSpinnerListener = object : ValueEventListener {
-
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     val sitetitleList =  ArrayList<Spinner_Model>()
@@ -47,7 +46,7 @@ class RegistrationActivity : AppCompatActivity() {
                         sitetitleList.add(Spinner_Model(site_name as String,uid as String))
                     }
                     val arrayAdapter = MyCustomSpinnerAdapter(this@RegistrationActivity,sitetitleList)
-                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     spinner_register_site.setAdapter(arrayAdapter)
                 }
             }
@@ -115,7 +114,7 @@ class RegistrationActivity : AppCompatActivity() {
             Toast.makeText(this,"Please select your profile pic!!",Toast.LENGTH_SHORT).show()
             return
         }
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("sites");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("sites")
         val query = mDatabase!!.orderByChild("uid").equalTo(site_selected.id.toString().trim())
         val specificsiteSelected = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
