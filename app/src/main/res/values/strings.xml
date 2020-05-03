@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MyCare</string>
+    <string name="title_activity_login_">Login_Activity</string>
+    <string name="title_activity_flats">FlatsActivity</string>
+</resources>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "658494236094",
+    "firebase_url": "https://myhospital-cf6e6.firebaseio.com",
+    "project_id": "myhospital-cf6e6",
+    "storage_bucket": "myhospital-cf6e6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658494236094:android:67099a74716830cc8bc5ef",
+        "android_client_info": {
+          "package_name": "com.android.mycare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658494236094-7tf8es1tqhajclg2epnhkr006nd5fed2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.mycare",
+            "certificate_hash": "ce7a18da7794418883cd0649ad726069835a9630"
+          }
+        },
+        {
+          "client_id": "658494236094-8hj82snp4ti6ra4ot7afbjkne6lv7bud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4AIShVlq8DU0ZgSr0o32SyriGrzF7a2E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658494236094-8hj82snp4ti6ra4ot7afbjkne6lv7bud.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

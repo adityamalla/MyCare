@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+                android:id="@+id/nav_profile"
+                android:icon="@null"
+                android:title="Profile"/>
+        <item
+                android:id="@+id/nav_home"
+                android:icon="@null"
+                android:title="Add Site"/>
+        <item
+                android:id="@+id/nav_flats"
+                android:icon="@null"
+                android:title="Add Flat Details"/>
+    </group>
+
+
+    <item android:title="Account Settings">
+        <menu>
+            <item
+                    android:id="@+id/nav_logout"
+                    android:icon="@null"
+                    android:title="Sign Out"/>
+        </menu>
+    </item>
+</menu>
