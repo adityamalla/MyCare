@@ -20,7 +20,11 @@
                 android:label="@string/title_activity_flats"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
-
+        <activity
+                android:name=".ModifyUserDetails"
+                android:label="@string/title_activity_modify_user_role"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
         <uses-library
                 android:name="org.apache.http.legacy"
                 android:required="false"/>

@@ -46,14 +46,17 @@ class Login_Activity : AppCompatActivity() {
                 if (dataSnapshot.exists()) {
                     var user_status: String = ""
                     var site_status: String = ""
+                    var role_id: Long = 0;
                     for(dataSnapshot1 in dataSnapshot.children) {
                         user_status = dataSnapshot1.child("user_status").getValue().toString()
                         site_status = dataSnapshot1.child("site_status").getValue().toString()
+                        role_id = dataSnapshot1.child("role").getValue() as Long
                         if(user_status.trim().equals("active")&&site_status.trim().equals("active")){
                             FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password).
                                 addOnCompleteListener {
                                     if (it.isSuccessful){
                                         val intent = Intent(this@Login_Activity,HomeActivity::class.java)
+                                        intent.putExtra("role",role_id)
                                         startActivity(intent)
                                     }else{
                                         return@addOnCompleteListener
@@ -109,7 +112,7 @@ class Login_Activity : AppCompatActivity() {
             }
         }
         query.addValueEventListener(loginAuth)
-
+        mDatabase = null
     }
     private fun hideKeyboard(view: View) {
         view?.apply {

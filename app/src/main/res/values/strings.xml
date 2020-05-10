@@ -2,4 +2,5 @@
     <string name="app_name">MyCare</string>
     <string name="title_activity_login_">Login_Activity</string>
     <string name="title_activity_flats">FlatsActivity</string>
+    <string name="title_activity_modify_user_role">ModifyUserRole</string>
 </resources>

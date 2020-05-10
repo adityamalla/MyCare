@@ -44,6 +44,7 @@ class FlatsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
     var listItems: ArrayList<String>? = null
     var profilePicURI: String? = ""
     var username: String? = ""
+    var role:Long = 0
     lateinit var imageProfileView: ImageView
     lateinit var welcomeText: TextView
     private val PERMISSION_REQUEST_CODE = 200
@@ -66,6 +67,8 @@ class FlatsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         navView.setNavigationItemSelectedListener(this)
+        val intent = intent
+        role = intent.getLongExtra("role",0)
         val headerView = navView.getHeaderView(0) as View
         imageProfileView= headerView.findViewById<ImageView>(R.id.imageProfileView)
         welcomeText= headerView.findViewById<TextView>(R.id.welcomeText)
@@ -208,12 +211,19 @@ class FlatsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             R.id.nav_profile -> {
                 Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show()
             }
-            R.id.nav_home -> {
-                val intent = Intent(this, FlatsActivity::class.java)
+            R.id.modify_user -> {
+                val intent = Intent(this, ModifyUserDetails::class.java)
+                intent.putExtra("role",role)
+                startActivity(intent)
+            }
+            R.id.nav_site -> {
+                val intent = Intent(this, HomeActivity::class.java)
+                intent.putExtra("role",role)
                 startActivity(intent)
             }
             R.id.nav_flats -> {
                 val intent = Intent(this, FlatsActivity::class.java)
+                intent.putExtra("role",role)
                 startActivity(intent)
             }
             R.id.nav_logout -> {
