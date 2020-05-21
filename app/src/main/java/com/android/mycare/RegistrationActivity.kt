@@ -90,9 +90,11 @@ class RegistrationActivity : AppCompatActivity() {
     private fun performRegister(){
         val email = email_edittext_reg.text.toString()
         val password = password_edittext_reg.text.toString()
+        val firstname = firstname_edittext_reg.text.toString()
+        val lastname = lastname_edittext_reg.text.toString()
         val referral_code = enter_referral_code.text.toString()
         val site_selected = spinner_register_site.selectedItem as Spinner_Model
-        if(email.isEmpty() || password.isEmpty()){
+        if(email.isEmpty() || password.isEmpty()||firstname.isEmpty()||lastname.isEmpty()){
             progressBar.visibility = View.GONE
             registration_success_textview.visibility = View.GONE
             Toast.makeText(this,"Please enter valid data in the fields!!",Toast.LENGTH_SHORT).show()
@@ -208,7 +210,8 @@ class RegistrationActivity : AppCompatActivity() {
     private fun saveUserToFireBaseDatabase(profileimageuri: String,site_id:String){
         val uid = FirebaseAuth.getInstance().uid?:""
         val ref = FirebaseDatabase.getInstance().getReference("/users/${uid}")
-        val user = User(uid,username_edittext_reg.text.toString().trim(),email_edittext_reg.text.toString().trim(),profileimageuri,"active","active",4,site_id)
+        val user = User(uid,username_edittext_reg.text.toString().trim(),email_edittext_reg.text.toString().trim(),
+            profileimageuri,"active","active",4,site_id,firstname_edittext_reg.text.toString(),lastname_edittext_reg.text.toString())
         ref.setValue(user).addOnSuccessListener {
             Log.d("RegisterActivity:::","Succesfully saved user firebase database")
             progressBar.visibility = View.GONE
@@ -218,6 +221,8 @@ class RegistrationActivity : AppCompatActivity() {
             password_edittext_reg.setText("")
             spinner_register_site.setSelection(0)
             enter_referral_code.setText("")
+            firstname_edittext_reg.setText("")
+            lastname_edittext_reg.setText("")
         }.addOnFailureListener {
             Log.d("RegisterActivity:::","Failed to save user:${it.message}")
             progressBar.visibility = View.GONE
@@ -232,4 +237,5 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 }
-class User(val uid: String,val username: String,val email: String, val profileimageuri: String,val user_status:String,val site_status: String,val role:Int,val site_id:String)
+class User(val uid: String,val username: String,val email: String, val profileimageuri: String,val user_status:String,val site_status: String,val role:Int,val site_id:String
+           ,val firstname:String,val lastname:String)

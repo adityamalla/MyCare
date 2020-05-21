@@ -1,5 +1,6 @@
 package com.android.mycare
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -10,11 +11,10 @@ import android.widget.TextView
 
 
 class AutocompleteCustomArrayAdapter(
-    var mContext: Context,
-    var layoutResourceId: Int,
+    var mContext: Activity,
     data: Array<MyObject>?
 ) :
-    ArrayAdapter<MyObject>(mContext, layoutResourceId, data!!) {
+    ArrayAdapter<MyObject>(mContext, R.layout.autocomplete_row, data!!) {
     val TAG = "AutocompleteCustomArrayAdapter.java"
     var data: Array<MyObject>? = null
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

@@ -27,14 +27,15 @@ class CustomAutoCompleteTextChangedListener(var context: Context) : TextWatcher 
         count: Int
     ) {
         try { // if you want to see in the logcat what the user types
-            Log.e(TAG, "User input: $userInput")
+            Log.d(TAG, "MU:::User input: $userInput")
             val acticity: ModifyUserDetails = context as ModifyUserDetails
             // update the adapater
             acticity.myAdapter!!.notifyDataSetChanged()
             // get suggestions from the database
             val myObjs: Array<MyObject>? = null
+            Log.d(TAG, "MU:::myObjs size: ${myObjs?.size}")
             // update the adapter
-            acticity.myAdapter = AutocompleteCustomArrayAdapter(acticity, R.layout.autocomplete_row, myObjs)
+            acticity.myAdapter = AutocompleteCustomArrayAdapter(acticity,  myObjs)
             acticity.autoCompleteTextView_Sites.setAdapter(acticity.myAdapter)
         } catch (e: NullPointerException) {
             e.printStackTrace()

@@ -2,16 +2,17 @@ package com.android.mycare
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.view.ViewGroup
+import android.widget.*
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -25,6 +26,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseError
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.activity_registration.*
 import kotlinx.android.synthetic.main.content_flats.*
 import kotlinx.android.synthetic.main.content_modify_user.*
 
@@ -37,6 +39,9 @@ class ModifyUserDetails : AppCompatActivity(), NavigationView.OnNavigationItemSe
     var profilePicURI: String? = ""
     var username: String? = ""
     var role:Long = 0
+    var site_id_selected:String=""
+    var user_id_selected:String=""
+    var role_id_selected:String=""
     lateinit var imageProfileView: ImageView
     lateinit var welcomeText: TextView
     private val PERMISSION_REQUEST_CODE = 200
@@ -49,7 +54,7 @@ class ModifyUserDetails : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (checkPermission()) {
             requestPermissionAndContinue()
         }
-        toolbar = findViewById(R.id.toolbar2)
+        toolbar = this.findViewById(R.id.toolbar2)
         setSupportActionBar(toolbar)
         drawerLayout = findViewById(R.id.drawer_layout2)
         navView = findViewById(R.id.nav_view2)
@@ -82,13 +87,72 @@ class ModifyUserDetails : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
         }
         ref!!.addValueEventListener(userListener)
-        getSiteSuggestions("Ganesh")
-       /* autoCompleteTextView_Sites.addTextChangedListener( CustomAutoCompleteTextChangedListener(this@ModifyUserDetails))
-            // ObjectItemData has no value at first
-        val ObjectItemData: Array<MyObject>? = null
-            // set the custom ArrayAdapter
-        myAdapter = AutocompleteCustomArrayAdapter(this@ModifyUserDetails, R.layout.autocomplete_row, ObjectItemData)
-        autoCompleteTextView_Sites.setAdapter(myAdapter)*/
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("role_master")
+        val query = mDatabase!!.orderByChild("role_name")
+        val roleSpinnerListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    val rolesList = java.util.ArrayList<Spinner_Model>()
+                    rolesList.add(Spinner_Model("please select a role","-1"))
+                    for(dataSnapshot1 in dataSnapshot.children){
+                        val role_name = dataSnapshot1.child("role_name").getValue()
+                        val role_id:String = dataSnapshot1.child("role_id").getValue().toString()
+                        rolesList.add(Spinner_Model(role_name as String,role_id as String))
+                    }
+                    val arrayAdapter = MyCustomSpinnerAdapter(this@ModifyUserDetails,rolesList)
+                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinner_roles.setAdapter(arrayAdapter)
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Failed to read value
+            }
+        }
+        query.addValueEventListener(roleSpinnerListener)
+        val adapter = PoiAdapter(this, android.R.layout.simple_list_item_1, getSiteSuggestions())
+        autoCompleteTextView_Sites.setAdapter(adapter)
+        autoCompleteTextView_Sites.threshold = 3
+        autoCompleteTextView_Sites.setOnItemClickListener() { parent, _, position, id ->
+            val selectedPoi = parent.adapter.getItem(position) as MyObject?
+            autoCompleteTextView_Sites.setText(selectedPoi?.objectName)
+            site_id_selected = selectedPoi?.objectId as String
+            autoCompleteTextView_Site_Users.setText("")
+            val adapter1 = PoiAdapter(this, android.R.layout.simple_list_item_1, getUserBasedonSiteSuggestions(site_id_selected))
+            autoCompleteTextView_Site_Users.setAdapter(adapter1)
+            autoCompleteTextView_Site_Users.threshold = 3
+        }
+        autoCompleteTextView_Site_Users.setOnItemClickListener() { parent, _, position, id ->
+            val selectedPoiUser = parent.adapter.getItem(position) as MyObject?
+            autoCompleteTextView_Site_Users.setText(selectedPoiUser?.objectName)
+            user_id_selected = selectedPoiUser?.objectId as String
+        }
+        button_modify_role.setOnClickListener {
+            val obj:Spinner_Model = spinner_roles.selectedItem as Spinner_Model
+            role_id_selected = obj.id.toString()
+            val hashMap:HashMap<String, Any> = HashMap<String,Any>()
+            hashMap.put("role", role_id_selected);
+            FirebaseDatabase.getInstance().getReference().child("users").child(user_id_selected)
+                .updateChildren(hashMap)
+
+                        val builder = AlertDialog.Builder(this@ModifyUserDetails)
+                        //set title for alert dialog
+                        builder.setTitle("")
+                        //set message for alert dialog
+                        builder.setMessage("User Role Modified Successfully")
+                        builder.setIcon(android.R.drawable.ic_dialog_alert)
+                        //performing positive action
+                        builder.setPositiveButton("Ok"){dialogInterface, which ->
+                            val intent = Intent(this@ModifyUserDetails, ModifyUserDetails::class.java)
+                            intent.putExtra("role",role)
+                            startActivity(intent)
+                        }
+                        // Create the AlertDialog
+                        val alertDialog: AlertDialog = builder.create()
+                        // Set other dialog properties
+                        alertDialog.setCancelable(false)
+                        alertDialog.show()
+        }
+        mDatabase = null
     }
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -119,7 +183,7 @@ class ModifyUserDetails : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return true
     }
     fun setProfileData(profilePicUri: String,username: String){
-        Log.d("FlatsActivity:::",profilePicUri+"***")
+        Log.d("ModifyUserDetails:::",profilePicUri+"***")
         Glide.with(this).
             load(profilePicUri).
             override(500,200)
@@ -177,22 +241,103 @@ class ModifyUserDetails : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
         }
     }
-    private fun getSiteSuggestions(searchTerm:String){
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("sites");
-        val query = mDatabase!!.orderByChild("site_name").startAt("Ganes")
-            .endAt("\uf8ff").addListenerForSingleValueEvent(
-                object : ValueEventListener {
-                    override fun onCancelled(p0: DatabaseError) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                    }
-                    override fun onDataChange(p0: DataSnapshot) {
-                        val children = p0!!.children
-                        // This returns the correct child count...
-                        Log.d("ModifyUserDetails: ",p0.children.count().toString())
-                        children.forEach {
-                            Log.d("ModifyUserDetails*****",it.toString())
+    public fun getSiteSuggestions():List<MyObject>{
+        var myList: MutableList<MyObject> = mutableListOf<MyObject>()
+        var count:Int = 0
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("sites");
+            val query = mDatabase!!.orderByChild("site_name");
+            val siteSuggestionsListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        for (dataSnapshot1 in dataSnapshot.children) {
+                            val site_name = dataSnapshot1.child("site_name").getValue()
+                            val uid = dataSnapshot1.child("uid").getValue()
+                            myList?.add(count,MyObject(site_name as String,uid as String))
+                            count++
                         }
                     }
-                })
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Failed to read value
+                }
+            }
+            query!!.addValueEventListener(siteSuggestionsListener)
+        return myList
+    }
+    public fun getUserBasedonSiteSuggestions(site_id:String):List<MyObject>{
+        var myList: MutableList<MyObject> = mutableListOf<MyObject>()
+        var count:Int = 0
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
+        val query = mDatabase!!.orderByChild("site_id").equalTo(site_id);
+        val siteSuggestionsListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (dataSnapshot1 in dataSnapshot.children) {
+                        val firstname = dataSnapshot1.child("firstname").getValue()
+                        val lastname = dataSnapshot1.child("lastname").getValue()
+                        val name = "$firstname $lastname"
+                        val uid = dataSnapshot1.child("uid").getValue()
+                        myList?.add(count,MyObject(name as String,uid as String))
+                        count++
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Failed to read value
+            }
+        }
+        query!!.addValueEventListener(siteSuggestionsListener)
+        return myList
+    }
+    inner class PoiAdapter(context: Context, @LayoutRes private val layoutResource: Int, private val allPois: List<MyObject>):
+        ArrayAdapter<MyObject>(context, layoutResource, allPois),
+        Filterable {
+        private var mPois: List<MyObject> = allPois
+
+        override fun getCount(): Int {
+            return mPois.size
+        }
+
+        override fun getItem(p0: Int): MyObject? {
+            return mPois.get(p0)
+        }
+
+        override fun getItemId(p0: Int): Long {
+            // Or just return p0
+            return p0.toLong()
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view: TextView = convertView as TextView? ?: LayoutInflater.from(context).inflate(layoutResource, parent, false) as TextView
+            if(mPois.size>0)
+            view.text = "${mPois[position].objectName}"
+            else
+            view.text = "No result found"
+            return view
+        }
+
+        override fun getFilter(): Filter {
+            return object : Filter() {
+                override fun publishResults(charSequence: CharSequence?, filterResults: Filter.FilterResults) {
+                    mPois = filterResults.values as List<MyObject>
+                    notifyDataSetChanged()
+                }
+
+                override fun performFiltering(charSequence: CharSequence?): Filter.FilterResults {
+                    val queryString = charSequence?.toString()?.toLowerCase()
+
+                    val filterResults = Filter.FilterResults()
+                    filterResults.values = if (queryString==null || queryString.isEmpty())
+                        allPois
+                    else
+                        allPois.filter {
+                            it.objectName.toLowerCase().contains(queryString)
+                        }
+                    return filterResults
+                }
+            }
+        }
     }
 }
