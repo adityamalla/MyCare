@@ -2,9 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        tools:context=".ModifyUserDetails"
-        android:id="@+id/constraint_layout_modify_user_role"
+        xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/constraint_layout_modify_user_1role"
         android:background="#A4E2E7" xmlns:android="http://schemas.android.com/apk/res/android">
 
 </androidx.constraintlayout.widget.ConstraintLayout>
