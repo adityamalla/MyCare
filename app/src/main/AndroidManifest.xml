@@ -16,6 +16,11 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
         <activity
+                android:name=".SitesActivity"
+                android:label="SitesActivity"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
                 android:name=".FlatsActivity"
                 android:label="@string/title_activity_flats"
                 android:theme="@style/AppTheme.NoActionBar">

@@ -211,18 +211,8 @@ class FlatsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             R.id.nav_profile -> {
                 Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show()
             }
-            R.id.modify_user -> {
-                val intent = Intent(this, ModifyUserDetails::class.java)
-                intent.putExtra("role",role)
-                startActivity(intent)
-            }
-            R.id.nav_site -> {
+            R.id.nav_home -> {
                 val intent = Intent(this, HomeActivity::class.java)
-                intent.putExtra("role",role)
-                startActivity(intent)
-            }
-            R.id.nav_flats -> {
-                val intent = Intent(this, FlatsActivity::class.java)
                 intent.putExtra("role",role)
                 startActivity(intent)
             }

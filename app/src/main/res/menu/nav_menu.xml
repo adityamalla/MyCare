@@ -2,21 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group>
         <item
+                android:id="@+id/nav_home"
+                android:icon="@null"
+                android:title="Home"/>
+        <item
                 android:id="@+id/nav_profile"
                 android:icon="@null"
                 android:title="Profile"/>
-        <item
-                android:id="@+id/nav_site"
-                android:icon="@null"
-                android:title="Add Site"/>
-        <item
-                android:id="@+id/nav_flats"
-                android:icon="@null"
-                android:title="Add Flat Details"/>
-        <item
-                android:id="@+id/modify_user"
-                android:icon="@null"
-                android:title="Modify User Role"/>
     </group>
 
 
